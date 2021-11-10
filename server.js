@@ -43,8 +43,11 @@ app.get("/api/:date?", (req, res) => {
   }
   else if (/^\d{2} /.test(req.params.date))
   { 
-    req.params.date = new Date(req.params.date).toString(); 
-
+    var UTC_string = ' UTC';
+    req.params.date = req.params.date.concat(' ', UTC_string);
+    console.log(req.params.date);
+    req.params.date = new Date(req.params.date).toUTCString(); 
+    console.log(req.params.date);
     if (req.params.date != "Invalid Date")
     {
       var timestp = Date.parse(req.params.date);

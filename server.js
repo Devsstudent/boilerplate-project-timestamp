@@ -26,33 +26,54 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get("/api/:date?", (req, res) => {
+  
+  console.log(req.params.date);
+
   if (/^\d{4}-\d{2}-\d{2}/.test(req.params.date) )
   {
-    var ut = new Date(req.params.date);
+    req.params.date = new Date(req.params.date).toUTCString();
     var timestp = Date.parse(req.params.date);
-    res.json({unix: timestp, utc: ut.toUTCString()});
+    res.json({unix: timestp, utc: req.params.date});
   }
   else if (/\d{13}/.test(req.params.date))
   {
     var time_unix = parseInt(req.params.date);
-    var utcc = new Date(time_unix * 1);
-    res.json({unix: time_unix, utc: utcc.toUTCString()});
+    req.params.date = new Date(time_unix * 1).toUTCString();;
+    res.json({unix: time_unix, utc: req.params.date });
+  }
+  else if (/^\d{2} /.test(req.params.date))
+  { 
+    req.params.date = new Date(req.params.date).toString(); 
+
+    if (req.params.date != "Invalid Date")
+    {
+      var timestp = Date.parse(req.params.date);
+      res.json({unix: timestp, utc: req.params.date});
+    }
+    else 
+    {
+      req.params.date = "Invalid Date";
+      res.json({error: req.params.date});
+    }
   }
   else if (req.params.date)
   {
-    res.json({error: "Invalid Date"});
+    req.params.date = "Invalid Date";
+    res.json({error: req.params.date});
   }
   else if (/\/$/.test(req.params.date))
   {
-    res.json({error: "Invalid Date"});
+    req.params.date = "Invalid Date";
+    res.json({error: req.params.date});
   }
   else 
   {
     var time = new Date().getTime();
-    var utccc = new Date(time * 1);
-    res.json({unix: time, utc: utccc.toUTCString()});
+    req.params.date = new Date(time * 1).toUTCString();
+    res.json({unix: time, utc: req.params.date});
   }
   
+  console.log(req.params);
 }); 
 
 
